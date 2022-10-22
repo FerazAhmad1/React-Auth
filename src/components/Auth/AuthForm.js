@@ -18,6 +18,29 @@ const AuthForm = () => {
     };
 
     if (isLogin) {
+      fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
+        {
+          method: "POST",
+          body: JSON.stringify(user),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((response) => {
+        if (response.ok) {
+          // do something
+        } else {
+          console.log(response);
+          return response.json().then((data) => {
+            let erorrMessage = "AuntheticationFailed";
+            if (data && data.error && data.error.message) {
+              erorrMessage = data.error.message;
+            }
+            alert(erorrMessage);
+          });
+        }
+      });
     } else {
       fetch(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
