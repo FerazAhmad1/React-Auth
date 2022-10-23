@@ -1,13 +1,16 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
 import classes from "./AuthForm.module.css";
 
+import { Context } from "../../store/auth-Context";
+
 const AuthForm = () => {
+  const ctx = useContext(Context);
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
     const enterEmail = emailInputRef.current.value;
     const enterPassword = passwordInputRef.current.value;
@@ -18,52 +21,50 @@ const AuthForm = () => {
     };
 
     if (isLogin) {
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
-        {
-          method: "POST",
-          body: JSON.stringify(user),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((response) => {
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
+          {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
         if (response.ok) {
-          // do something
-        } else {
-          console.log(response);
-          return response.json().then((data) => {
-            let erorrMessage = "AuntheticationFailed";
-            if (data && data.error && data.error.message) {
-              erorrMessage = data.error.message;
-            }
-            alert(erorrMessage);
-          });
+          console.log(data.idToken);
+          ctx.login(data.idToken);
+          ctx.isLoggedin = true;
         }
-      });
+
+        console.log(data);
+        if (data.error) throw data.error;
+      } catch (error) {
+        console.log(error.message);
+      }
     } else {
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
-        {
-          method: "POST",
-          body: JSON.stringify(user),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((response) => {
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDJrVA_6eOyyyRBMhwaXyDi6FK0KoGlfGI",
+          {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
         if (response.ok) {
-          // do something
-        } else {
-          return response.json().then((data) => {
-            let erorrMessage = "AuntheticationFailed";
-            if (data && data.error && data.error.message) {
-              erorrMessage = data.error.message;
-            }
-            alert(erorrMessage);
-          });
+          // do some thing
         }
-      });
+        if (data.error) throw data.error;
+      } catch (error) {
+        alert(error.message);
+        console.log(error);
+      }
     }
   };
 
