@@ -36,7 +36,7 @@ const AuthForm = () => {
         if (response.ok) {
           console.log(data.idToken);
           ctx.login(data.idToken);
-          ctx.isLoggedin = true;
+          // ctx.isLoggedin = true;
         }
 
         console.log(data);

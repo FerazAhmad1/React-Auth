@@ -15,7 +15,9 @@ const ContextProvider = (props) => {
     console.log("yes");
     setToken(token);
   };
-  const logOutHandler = () => {};
+  const logOutHandler = () => {
+    setToken("");
+  };
 
   const contextValue = {
     token: token,

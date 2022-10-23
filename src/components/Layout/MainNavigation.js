@@ -5,6 +5,11 @@ import classes from "./MainNavigation.module.css";
 import { Context } from "../../store/auth-Context";
 const MainNavigation = () => {
   const ctx = useContext(Context);
+  const clickHandler = (event) => {
+    event.preventDefault();
+    ctx.logOut();
+    console.log("yes");
+  };
   const isLoggedin = ctx.isLoggedin;
   return (
     <header className={classes.header}>
@@ -25,7 +30,7 @@ const MainNavigation = () => {
           )}
           {isLoggedin && (
             <li>
-              <button>Logout</button>
+              <button onClick={clickHandler}>Logout</button>
             </li>
           )}
         </ul>
